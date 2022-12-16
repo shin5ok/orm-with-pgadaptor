@@ -5,6 +5,7 @@ import click
 import os
 import json
 import logging
+from datetime import datetime
 from typing import *
 
 DSN: str = os.environ.get("DSN", "postgresql://@localhost/game")
@@ -33,9 +34,9 @@ def writing(name: str) -> None:
     try:
         with engine.begin() as connection:
             user_id = str(uuid.uuid4())
-            import datetime
-            dt = datetime.datetime.now()
-            connection.execute(users.insert(), {"user_id": user_id, "name": name, "created_at": dt, "updated_at":dt})
+            dt = datetime.now()
+            r = {"user_id": user_id, "name": name, "created_at": dt, "updated_at":dt}
+            connection.execute(users.insert(), r)
     except Exception as e:
         print(str(e))
 
