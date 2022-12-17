@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 
 from sqlalchemy import *
+from sqlalchemy.orm import declarative_base, sessionmaker
 import click
 import os
 import json
 import logging
 from datetime import datetime, timezone
+import typing
 from typing import *
 
 DSN: str = os.environ.get("DSN", "postgresql://@localhost/game")
@@ -16,6 +18,14 @@ logging.basicConfig()
 loggingConfig = logging.getLogger('sqlalchemy.engine')
 if debug_flag:
     loggingConfig.setLevel(logging.DEBUG)
+
+Base = declarative_base()
+class Users(Base):
+    __tablename__ = 'users'
+    user_id = Column(String, primary_key=True)
+    name = Column(String)
+    created_at = Column(DateTime)
+    updated_at = Column(DateTime)
 
 users = Table('users', MetaData(bind=engine),
             Column('user_id', String(32), primary_key=True),
@@ -44,6 +54,20 @@ def writing(name: str) -> None:
             connection.execute(users.insert(), r)
     except Exception as e:
         print(str(e))
+
+@cli.command()
+@click.option("--name", "-n")
+def search(name: str) -> slice:
+    try:
+        session = sessionmaker(bind=engine)()
+        result = session.query(Users).filter(Users.name==name)
+        data = ([[v.name, v.user_id] for v in result])
+        print(data)
+        return data
+    except Exception as e:
+        print(str(e))
+        return ()
+
 
 if __name__ == '__main__':
     cli()
