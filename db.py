@@ -6,6 +6,7 @@ import click
 import os
 import json
 import logging
+import uuid
 from datetime import datetime, timezone
 import typing
 from typing import *
@@ -44,8 +45,6 @@ def put(name: str) -> None:
     writing(name) 
 
 def writing(name: str) -> None:
-    import uuid
-
     try:
         with engine.begin() as connection:
             user_id = str(uuid.uuid4())
@@ -58,15 +57,19 @@ def writing(name: str) -> None:
 @cli.command()
 @click.option("--name", "-n")
 def search(name: str) -> slice:
+    query(name)
+
+def query(name: str) -> None:
     try:
         session = sessionmaker(bind=engine)()
-        result = session.query(Users).filter(Users.name==name)
-        data = ([[v.name, v.user_id] for v in result])
-        print(data)
-        return data
+        query = session.query(Users).filter(Users.name==name)
+        results = ([[v.name, v.user_id] for v in query])
+        print(results)
+        return results
     except Exception as e:
         print(str(e))
-        return ()
+        return []
+    
 
 
 if __name__ == '__main__':
