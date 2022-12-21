@@ -63,7 +63,7 @@ def query(name: str) -> None:
     try:
         session = sessionmaker(bind=engine)()
         query = session.query(Users).filter(Users.name==name)
-        results = ([[v.name, v.user_id] for v in query])
+        results = ([{"name":v.name, "id":v.user_id} for v in query])
         print(results)
         return results
     except Exception as e:
