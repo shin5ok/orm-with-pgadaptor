@@ -46,7 +46,7 @@ def _check():
 @click.command()
 @click.option("--worker", "-w", default=1)
 @click.option("--port", "-p", default="8080")
-def _run(worker: int, port: int, reload: bool):
+def _run(worker: int, port: int):
     port = os.environ.get("PORT", port)
     options = {
             'port': int(port),
