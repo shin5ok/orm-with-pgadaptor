@@ -8,7 +8,6 @@ import json
 import logging
 import uuid
 from datetime import datetime, timezone
-import typing
 from typing import *
 
 DSN: str = os.environ.get("DSN", "postgresql://@localhost/game")
@@ -44,7 +43,7 @@ def cli() -> None:
 def put(name: str) -> None:
     writing(name) 
 
-def writing(name: str) -> None:
+def writing(name: str) -> str:
     try:
         user_id = str(uuid.uuid4())
         with engine.begin() as connection:
@@ -58,10 +57,10 @@ def writing(name: str) -> None:
 
 @cli.command()
 @click.option("--name", "-n")
-def search(name: str) -> slice:
+def search(name: str) -> None:
     query(name)
 
-def query(name: str) -> None:
+def query(name: str) -> List:
     try:
         session = sessionmaker(bind=engine)()
         query = session.query(Users).filter(Users.name==name)
