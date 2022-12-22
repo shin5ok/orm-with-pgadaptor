@@ -52,23 +52,23 @@ def writing(name: str) -> str:
             connection.execute(users.insert(), r)
         return user_id
     except Exception as e:
-        print(str(e))
+        logging.info(str(e))
         return ""
 
 @cli.command()
 @click.option("--name", "-n")
 def search(name: str) -> None:
-    query(name)
+    print(query(name))
 
 def query(name: str) -> List:
     try:
         session = sessionmaker(bind=engine)()
         query = session.query(Users).filter(Users.name==name)
         results = ([{"name":v.name, "id":v.user_id} for v in query])
-        print(results)
+        logging.debug(results)
         return results
     except Exception as e:
-        print(str(e))
+        logging.info(str(e))
         return []
     
 
