@@ -46,13 +46,15 @@ def put(name: str) -> None:
 
 def writing(name: str) -> None:
     try:
+        user_id = str(uuid.uuid4())
         with engine.begin() as connection:
-            user_id = str(uuid.uuid4())
             dt = datetime.now(timezone.utc)
             r = {"user_id": user_id, "name": name, "created_at": dt, "updated_at":dt}
             connection.execute(users.insert(), r)
+        return user_id
     except Exception as e:
         print(str(e))
+        return ""
 
 @cli.command()
 @click.option("--name", "-n")
