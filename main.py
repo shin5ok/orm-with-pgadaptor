@@ -6,6 +6,7 @@ import uvicorn
 import db
 import os
 from typing import List
+import click
 
 app = FastAPI()
 
@@ -42,12 +43,19 @@ def _get(user):
 def _check():
     return "ok\n"
 
-if __name__ == '__main__':
-    port = os.environ.get("PORT", "8080")
+@click.command()
+@click.option("--worker", "-w", default=1)
+@click.option("--port", "-p", default="8080")
+def _run(worker: int, port: int, reload: bool):
+    port = os.environ.get("PORT", port)
     options = {
             'port': int(port),
             'host': '0.0.0.0',
-            'workers': 2,
+            'workers': worker,
             'reload': True,
         }
+    print(options)
     uvicorn.run("main:app", **options)
+
+if __name__ == '__main__':
+    _run()
